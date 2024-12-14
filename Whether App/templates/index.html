@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/style.css">
+    <title>Weather App</title>
+</head>
+<body>
+    <div class="weather-container">
+        <h1>Weather App</h1>
+        <p>Enter a city name to check its weather:</p>
+        <input type="text" id="cityInput" placeholder="Enter city name..." />
+        <button onclick="fetchWeather()">Get Weather</button>
+        <div id="weatherDetails" style="margin-top: 20px; display: none;">
+            <p class="temp" id="temperature"></p>
+            <p id="conditions"></p>
+            <p id="humidity"></p>
+            <p id="wind"></p>
+        </div>
+    </div>
+
+    <script>
+        async function fetchWeather() {
+            const city = document.getElementById("cityInput").value.trim();
+            if (!city) {
+                alert("Please enter a valid city name.");
+                return;
+            }
+
+            try {
+                const response = await fetch(`/get_weather?city=${city}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    document.getElementById("weatherDetails").style.display = "block";
+                    document.getElementById("temperature").textContent = `Temperature: ${data.temperature}°C (Feels like: ${data.feels_like}°C)`;
+                    document.getElementById("conditions").textContent = `Condition: ${data.condition}`;
+                    document.getElementById("humidity").textContent = `Humidity: ${data.humidity}%`;
+                    document.getElementById("wind").textContent = `Wind Speed: ${data.wind_speed} m/s`;
+                } else {
+                    alert(data.error);
+                }
+
+            } catch (error) {
+                alert("An error occurred: " + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
